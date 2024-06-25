@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id  Int @id @default(autoincrement())
+  email String @unique
+
+  name String?
+  contact String? @unique
+  discuss Discuss[]
+  tokens Token[]
+}
+// add password in above schema (behind 1hrs in video to recommit migration of prsima)
+
+model Token {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  type String // EMAIL|API
+  emailToken String? @unique
+
+  valid Boolean @default(true)
+  expiration DateTime
+
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+}
+
+// enum TokenType {
+//   EMAIL
+//   API
+// }
+
+
+model Discuss{
+  id Int @id @default(autoincrement())
+  createOn DateTime @default(now())
+  updatedOn DateTime @default(now())
+
+  text String 
+  image String? 
+  hashTags String?
+
+  impression Int @default(0)
+
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+}
+
